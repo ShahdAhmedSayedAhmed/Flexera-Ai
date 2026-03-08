@@ -1,16 +1,10 @@
-# Exercise Validator Requirements
-# Install with: pip install -r requirements_validator.txt
-
-# Core dependencies
 ultralytics>=8.0.0
 opencv-python>=4.8.0
 numpy>=1.24.0
 
-# Optional for enhanced features
-scipy>=1.11.0  # Advanced angle calculations
-matplotlib>=3.7.0  # Visualization and plotting
+scipy>=1.11.0  
+matplotlib>=3.7.0
 
-# Development and testing
-pytest>=7.4.0  # Unit testing
-black>=23.0.0  # Code formatting
-flake8>=6.0.0  # Linting
+pytest>=7.4.0  
+black>=23.0.0  
+flake8>=6.0.0  
