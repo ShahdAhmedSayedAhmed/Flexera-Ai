@@ -12,10 +12,6 @@ class ErrorDetection:
     expected_range: Tuple[float, float]
 
 
-# Camera configuration for each exercise
-# focus_area: which body part camera should focus on
-# zoom_level: 1.0 = full body, 0.5 = half body (closer)
-# key_landmarks: indices to highlight during exercise
 EXERCISE_CAMERA_CONFIG = {
     'bending_knee_no_support_seated': {
         'focus_area': 'lower_body',

@@ -1,10 +1,3 @@
-"""
-FlexEra Exercise AI API
-=======================
-FastAPI backend for real-time exercise validation using YOLOv8 pose detection.
-Designed for direct integration with the FlexEra Flutter app.
-"""
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from ultralytics import YOLO
@@ -28,7 +21,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
 app.include_router(health.router)
 app.include_router(exercises.router)
 app.include_router(sessions.router)

@@ -17,13 +17,8 @@ from app.core.exercise_rules import (
 
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-#  CompleteSystem
-# ─────────────────────────────────────────────────────────────────────────────
-
 class CompleteSystem:
 
-    # ── Initialization ────────────────────────────────────────────────────────
 
     def __init__(self, exercise_key):
         print(f"Loading system for: {exercise_key}")

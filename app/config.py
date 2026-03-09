@@ -1,6 +1,5 @@
 from typing import Dict
 
-# Maps exercise_id -> metadata (matches Flutter's category naming)
 EXERCISE_CATALOG: Dict[str, dict] = {
     "01": {
         "key": "bending_knee_no_support_seated",

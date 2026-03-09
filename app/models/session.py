@@ -8,15 +8,8 @@ from app.config import EXERCISE_CATALOG
 
 
 class ExerciseSession:
-    """Tracks a single user's exercise session including progress."""
 
-    def __init__(
-        self,
-        exercise_id: str,
-        user_id: str,
-        target_sets: int = 3,
-        target_reps: int = 10,
-    ):
+    def __init__(self, exercise_id: str, user_id: str, user_gender: str = 'female', target_sets: int = 3, target_reps: int = 10):
         info = EXERCISE_CATALOG.get(exercise_id)
         if not info:
             raise ValueError(f"Unknown exercise ID: {exercise_id}")
@@ -28,23 +21,19 @@ class ExerciseSession:
         self.exercise_name = info["name"]
         self.target_sets = target_sets
         self.target_reps = target_reps
-
         self.current_set = 1
         self.completed_sets = 0
         self.is_complete = False
         self.started_at = datetime.utcnow().isoformat()
         self.completed_at: Optional[str] = None
-
         self.validator = MultiSideValidator(self.exercise_key, confidence_threshold=0.5)
-        self.correction = create_correction(voice_enabled=False, cooldown=3.0)
+        self.correction = create_correction(voice_enabled=True, cooldown=3.0, voice_gender=user_gender)
 
     def reset_set(self):
-        """Reset rep counter for the next set."""
         self.validator.reset()
         self.correction.reset()
 
     def reset_all(self):
-        """Reset entire session from the beginning."""
         self.current_set = 1
         self.completed_sets = 0
         self.is_complete = False
@@ -53,11 +42,9 @@ class ExerciseSession:
         self.correction.reset()
 
     def check_set_complete(self) -> bool:
-        """Returns True if the current set's rep target has been reached."""
         return self.validator.get_total_reps() >= self.target_reps
 
     def advance_set(self):
-        """Move to next set or mark exercise as complete."""
         self.completed_sets += 1
         if self.completed_sets >= self.target_sets:
             self.is_complete = True

@@ -11,19 +11,6 @@ router = APIRouter(tags=["WebSocket"])
 
 @router.websocket("/ws/{session_key}")
 async def websocket_endpoint(websocket: WebSocket, session_key: str):
-    """
-    Real-time exercise validation via WebSocket.
-
-    Flutter sends frames as JSON messages:
-        { "type": "frame", "data": "<base64_image>" }
-        { "type": "reset" }
-        { "type": "ping" }
-        { "type": "next_set" }
-
-    Server responds with FrameProcessResponse JSON.
-
-    Connection URL: ws://<host>:8000/ws/<session_key>
-    """
     await websocket.accept()
 
     session = state.active_sessions.get(session_key)
@@ -37,7 +24,6 @@ async def websocket_endpoint(websocket: WebSocket, session_key: str):
     try:
         while True:
             data = await websocket.receive_text()
-
             try:
                 msg = json.loads(data)
                 msg_type = msg.get("type", "frame")
@@ -55,12 +41,10 @@ async def websocket_endpoint(websocket: WebSocket, session_key: str):
 
                     raw = run_pose_and_validate(frame, session)
 
-                    # Auto-advance set when rep target is reached
                     if raw["success"] and session.check_set_complete() and not session.is_complete:
                         session.advance_set()
 
-                    response = build_frame_response(session, raw)
-                    await websocket.send_json(response)
+                    await websocket.send_json(build_frame_response(session, raw))
 
                 elif msg_type == "next_set":
                     if not session.is_complete:

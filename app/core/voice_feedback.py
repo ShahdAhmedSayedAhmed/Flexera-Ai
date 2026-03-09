@@ -9,9 +9,7 @@ class VoiceFeedback:
         self.engine = pyttsx3.init()
         self.engine.setProperty('rate', rate)
         self.engine.setProperty('volume', volume)
-
         self._set_voice_gender(voice_gender)
-
         self.enabled = True
         self.is_speaking = False
         self.last_messages = {}
@@ -19,62 +17,34 @@ class VoiceFeedback:
         self.lock = threading.Lock()
 
     def _set_voice_gender(self, gender='female'):
-        """Set voice to female or male"""
         voices = self.engine.getProperty('voices')
+        target = gender.lower()
 
-        target_gender = gender.lower()
-        selected_voice = None
+        english_ids = ['gmw/en-us', 'gmw/en', 'gmw/en-gb-x-rp', 'gmw/en-029']
+        base_voice = next((v for v in voices if v.id in english_ids), voices[0])
 
-        for voice in voices:
-            voice_id_lower = voice.id.lower()
-            voice_name_lower = voice.name.lower() if voice.name else ""
-
-            if target_gender == 'female':
-                if any(keyword in voice_id_lower or keyword in voice_name_lower
-                       for keyword in ['female', 'woman', 'zira', 'hazel', 'susan', 'samantha']):
-                    selected_voice = voice
-                    break
-            elif target_gender == 'male':
-                if any(keyword in voice_id_lower or keyword in voice_name_lower
-                       for keyword in ['male', 'man', 'david', 'mark', 'alex']):
-                    selected_voice = voice
-                    break
-
-        if selected_voice is None and len(voices) > 1:
-            selected_voice = voices[1] if target_gender == 'female' else voices[0]
-        elif selected_voice is None and len(voices) > 0:
-            selected_voice = voices[0]
-
-        if selected_voice:
-            self.engine.setProperty('voice', selected_voice.id)
-            print(f"Voice set to: {selected_voice.name or selected_voice.id}")
+        variant = '+f3' if target == 'female' else '+m3'
+        voice_id = base_voice.id + variant
+        self.engine.setProperty('voice', voice_id)
 
     def set_voice(self, gender):
-        """Change voice gender at runtime"""
         self._set_voice_gender(gender)
 
     def list_available_voices(self):
-        """List all available voices on the system"""
-        voices = self.engine.getProperty('voices')
-        print("\nAvailable voices:")
-        for i, voice in enumerate(voices):
-            print(f"  {i}: {voice.name} ({voice.id})")
-        return voices
+        return self.engine.getProperty('voices')
 
     def speak(self, text, force=False):
         if not self.enabled or not text:
             return False
 
-        current_time = time.time()
-
+        now = time.time()
         with self.lock:
             if not force and text in self.last_messages:
-                if current_time - self.last_messages[text] < self.cooldown:
+                if now - self.last_messages[text] < self.cooldown:
                     return False
-            self.last_messages[text] = current_time
+            self.last_messages[text] = now
 
-        thread = threading.Thread(target=self._speak_thread, args=(text,))
-        thread.daemon = True
+        thread = threading.Thread(target=self._speak_thread, args=(text,), daemon=True)
         thread.start()
         return True
 
@@ -83,7 +53,7 @@ class VoiceFeedback:
         try:
             self.engine.say(text)
             self.engine.runAndWait()
-        except:
+        except Exception:
             pass
         finally:
             self.is_speaking = False
@@ -101,5 +71,5 @@ class VoiceFeedback:
     def stop(self):
         try:
             self.engine.stop()
-        except:
+        except Exception:
             pass

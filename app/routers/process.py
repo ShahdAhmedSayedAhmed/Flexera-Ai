@@ -8,18 +8,8 @@ from app.services.frame_service import build_frame_response
 router = APIRouter(tags=["Frame Processing"])
 
 
-@router.post(
-    "/process",
-    response_model=FrameProcessResponse,
-    summary="Process a single camera frame",
-)
+@router.post("/process", response_model=FrameProcessResponse, summary="Process a single camera frame")
 async def process_frame(req: FrameProcessRequest):
-    """
-    Send one base64-encoded camera frame and receive exercise validation feedback.
-
-    For continuous real-time usage prefer the WebSocket endpoint /ws/{session_key}.
-    Use this REST endpoint for testing or low-frequency polling.
-    """
     if state.pose_model is None:
         raise HTTPException(status_code=503, detail="AI model is still loading")
 
@@ -34,7 +24,6 @@ async def process_frame(req: FrameProcessRequest):
 
     raw = run_pose_and_validate(frame, session)
 
-    # Auto-advance set if rep target hit
     if raw["success"] and session.check_set_complete() and not session.is_complete:
         session.advance_set()
 

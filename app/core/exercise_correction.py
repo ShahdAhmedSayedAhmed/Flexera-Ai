@@ -1,8 +1,8 @@
 import time
-from typing import Dict, List, Optional
 from collections import deque
+
 from app.core.voice_feedback import VoiceFeedback
-from app.core.exercise_rules import ErrorDetection, EXERCISE_RULES
+from app.core.exercise_rules import ErrorDetection, ERROR_RULES
 
 
 class ExerciseCorrection:
@@ -19,10 +19,10 @@ class ExerciseCorrection:
 
     def detect_errors(self, exercise_name, joint_angles, current_rep_state, is_valid_motion, side='left'):
         errors = []
-        if exercise_name not in EXERCISE_RULES:
+        if exercise_name not in ERROR_RULES:
             return errors
 
-        rules = EXERCISE_RULES[exercise_name]
+        rules = ERROR_RULES[exercise_name]
         primary_joint = rules['joint']
         min_angle = rules['min_angle']
         max_angle = rules['max_angle']
@@ -34,15 +34,14 @@ class ExerciseCorrection:
         self.angle_history.append({
             'angle': primary_angle,
             'time': time.time(),
-            'state': current_rep_state
+            'state': current_rep_state,
         })
 
         for error_type, error_def in rules['errors'].items():
             if error_type == 'stopped_motion' and rules.get('continuous_motion'):
                 if len(self.angle_history) >= 10:
-                    recent_angles = [h['angle'] for h in list(self.angle_history)[-10:]]
-                    angle_variance = max(recent_angles) - min(recent_angles)
-                    if angle_variance < 5:
+                    recent = [h['angle'] for h in list(self.angle_history)[-10:]]
+                    if max(recent) - min(recent) < 5:
                         self.motion_stopped_frames += 1
                         if self.motion_stopped_frames > 15:
                             errors.append(ErrorDetection(
@@ -51,7 +50,7 @@ class ExerciseCorrection:
                                 recommendation=error_def['recommendation'],
                                 joint_name=primary_joint,
                                 current_value=primary_angle,
-                                expected_range=(min_angle, max_angle)
+                                expected_range=(min_angle, max_angle),
                             ))
                     else:
                         self.motion_stopped_frames = 0
@@ -67,7 +66,7 @@ class ExerciseCorrection:
                     recommendation=error_def['recommendation'],
                     joint_name=primary_joint,
                     current_value=primary_angle,
-                    expected_range=(min_angle, max_angle)
+                    expected_range=(min_angle, max_angle),
                 ))
 
         if 'secondary_joint' in rules:
@@ -83,7 +82,7 @@ class ExerciseCorrection:
                         recommendation="Keep your leg straight",
                         joint_name=sec_joint,
                         current_value=sec_angle,
-                        expected_range=(sec_min, sec_max)
+                        expected_range=(sec_min, sec_max),
                     ))
 
         if rules.get('movement_speed_check'):
@@ -99,7 +98,7 @@ class ExerciseCorrection:
                                 recommendation="Slow down your movement",
                                 joint_name=primary_joint,
                                 current_value=rep_duration,
-                                expected_range=(min_duration, 5.0)
+                                expected_range=(min_duration, 5.0),
                             ))
                     self.rep_start_time = time.time()
                 elif current_rep_state == 'min':
@@ -114,7 +113,7 @@ class ExerciseCorrection:
                 recommendation="Complete the full movement",
                 joint_name=primary_joint,
                 current_value=primary_angle,
-                expected_range=(min_angle, max_angle)
+                expected_range=(min_angle, max_angle),
             ))
 
         return errors
@@ -123,8 +122,7 @@ class ExerciseCorrection:
         if not errors:
             return None
         severity_priority = {'high': 3, 'medium': 2, 'low': 1}
-        sorted_errors = sorted(errors, key=lambda e: severity_priority[e.severity], reverse=True)
-        return sorted_errors[0].recommendation
+        return sorted(errors, key=lambda e: severity_priority[e.severity], reverse=True)[0].recommendation
 
     def provide_feedback(self, exercise_name, joint_angles, current_rep_state, is_valid_motion, side='left', force_speak=False):
         errors = self.detect_errors(exercise_name, joint_angles, current_rep_state, is_valid_motion, side)
@@ -137,7 +135,7 @@ class ExerciseCorrection:
             'recommendation': recommendation,
             'spoken': spoken,
             'error_count': len(errors),
-            'highest_severity': errors[0].severity if errors else None
+            'highest_severity': errors[0].severity if errors else None,
         }
 
     def enable_voice(self):
@@ -158,7 +156,7 @@ class ExerciseCorrection:
         return {
             'total_errors': sum(self.error_counts.values()),
             'error_breakdown': dict(self.error_counts),
-            'angle_history_size': len(self.angle_history)
+            'angle_history_size': len(self.angle_history),
         }
 
 

@@ -3,11 +3,11 @@ import numpy as np
 import base64
 
 import app.state as state
+from app.core.exercise_validator import ExerciseState
 from app.models.session import ExerciseSession
 
 
 def decode_base64_frame(image_base64: str) -> np.ndarray:
-    """Decode a base64 string to an OpenCV image array."""
     img_bytes = base64.b64decode(image_base64)
     nparr = np.frombuffer(img_bytes, np.uint8)
     frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -17,10 +17,6 @@ def decode_base64_frame(image_base64: str) -> np.ndarray:
 
 
 def run_pose_and_validate(frame: np.ndarray, session: ExerciseSession) -> dict:
-    """
-    Run YOLOv8 pose on a frame, validate the exercise,
-    and return a structured result dict.
-    """
     results = state.pose_model(frame, verbose=False)
 
     if not results or len(results[0].keypoints.data) == 0:
@@ -53,14 +49,7 @@ def run_pose_and_validate(frame: np.ndarray, session: ExerciseSession) -> dict:
         f"{active_side}_elbow": active.current_angle,
     }
 
-    state_map = {
-        "IDLE": "idle",
-        "MIN_POSITION": "min",
-        "MAX_POSITION": "max",
-        "TRANSITION": "transition",
-        "INVALID": "idle",
-    }
-    rep_state = state_map.get(active.state.value, "idle")
+    rep_state = "idle" if active.state == ExerciseState.INVALID else active.state.value
 
     feedback_result = session.correction.provide_feedback(
         exercise_name=session.exercise_key,
