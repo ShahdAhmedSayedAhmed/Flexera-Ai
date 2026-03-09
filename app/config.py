@@ -5,7 +5,6 @@ EXERCISE_CATALOG: Dict[str, dict] = {
         "key": "bending_knee_no_support_seated",
         "name": "Bending the knee without support while sitting",
         "category": "lower_left",
-        "session": 1,
         "image": "assets/images/Bending the knee without support while sitting.png",
     },
     "02": {
