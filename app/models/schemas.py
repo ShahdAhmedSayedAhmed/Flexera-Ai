@@ -1,11 +1,11 @@
-from typing import Optional, List
+from typing import Optional, List, Literal
 from pydantic import BaseModel, Field
 
 
 class SessionStartRequest(BaseModel):
     exercise_id: str = Field(..., description="Exercise ID (01-16)")
     user_id: str = Field(..., description="Flutter app user ID")
-    user_gender: str = Field("female", description="User gender: 'female' or 'male'")
+    user_gender: Literal["male", "female"] = Field("female", description="User gender: 'male' or 'female'")
     target_sets: int = Field(3, ge=1, le=20, description="Number of sets to complete")
     target_reps: int = Field(10, ge=1, le=100, description="Reps per set")
 

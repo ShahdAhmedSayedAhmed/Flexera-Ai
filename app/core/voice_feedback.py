@@ -18,14 +18,28 @@ class VoiceFeedback:
 
     def _set_voice_gender(self, gender='female'):
         voices = self.engine.getProperty('voices')
+        if not voices:
+            return
+
         target = gender.lower()
-
-        english_ids = ['gmw/en-us', 'gmw/en', 'gmw/en-gb-x-rp', 'gmw/en-029']
-        base_voice = next((v for v in voices if v.id in english_ids), voices[0])
-
         variant = '+f3' if target == 'female' else '+m3'
-        voice_id = base_voice.id + variant
-        self.engine.setProperty('voice', voice_id)
+
+        # First, try to find a voice whose gender property matches directly
+        gender_matched = next(
+            (v for v in voices if getattr(v, 'gender', None) and v.gender.lower() == target),
+            None
+        )
+        if gender_matched:
+            self.engine.setProperty('voice', gender_matched.id)
+            return
+
+        # Fall back to eSpeak variant suffixes
+        english_ids = ['gmw/en-us', 'gmw/en', 'gmw/en-gb-x-rp', 'gmw/en-029']
+        base_voice = next((v for v in voices if v.id.split('+')[0] in english_ids), voices[0])
+
+        # Strip any existing variant before appending the new one
+        base_id = base_voice.id.split('+')[0]
+        self.engine.setProperty('voice', base_id + variant)
 
     def set_voice(self, gender):
         self._set_voice_gender(gender)
