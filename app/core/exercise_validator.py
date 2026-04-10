@@ -42,73 +42,107 @@ class ValidationResult:
 
 
 EXERCISE_RULES = {
-    'bending_knee_no_support_seated': ExerciseRule(
-        name='Bending knee no support seated',
+    # ─────────────────────────────────────────────────────────────────────────
+    # SESSION 1 – LOWER BODY  (conservative, initial ROM)
+    #
+    # Seated knee exercises: angle = hip→knee→ankle (knee flexion angle)
+    #   Sitting normally (foot on floor): knee ≈ 90°
+    #   Leg fully extended parallel to ground: knee ≈ 170–175°
+    #   State machine: MIN = most bent (≈90°), MAX = most extended (≈170°)
+    #
+    # Heel-slide supine: same keypoints, knee starts extended (≈170°), bends (≈60–70°)
+    #   MIN = most flexed, MAX = most extended
+    #
+    # Straight-leg raise supine: angle = shoulder→hip→knee (hip angle)
+    #   Formula: hip_angle = 180° − raise_angle_from_horizontal
+    #   Lying flat: ≈ 170–175°.  Raised 30° = 150°.  Raised 60° = 120°.
+    #   State machine: MIN = leg raised (smaller angle), MAX = leg flat (larger angle)
+    # ─────────────────────────────────────────────────────────────────────────
+    'bending_knee_no_support_seated_s1': ExerciseRule(
+        # Sit, hang leg at ≈90°, extend to ≈155°  (conservative partial extension)
+        name='Bending knee no support seated (Session 1)',
         primary_joint=JointAngleRule(
             keypoint_indices=(KEYPOINTS['left_hip'], KEYPOINTS['left_knee'], KEYPOINTS['left_ankle']),
-            min_angle=70,
-            max_angle=180,
+            min_angle=85,   # MIN = seated resting (foot hanging ≈85–90°)
+            max_angle=155,  # MAX = partial extension (≈155°)
             name='knee',
         ),
         sides=['left', 'right'],
     ),
-    'bending_knee_bed_support_supine': ExerciseRule(
-        name='Bending knee with bed support supine',
+    'bending_knee_with_support_seated_s1': ExerciseRule(
+        # Back-supported sit, hang leg ≈90°, extend to ≈150°
+        name='Bending knee with support seated (Session 1)',
         primary_joint=JointAngleRule(
             keypoint_indices=(KEYPOINTS['left_hip'], KEYPOINTS['left_knee'], KEYPOINTS['left_ankle']),
-            min_angle=60,
-            max_angle=150,
+            min_angle=85,   # MIN = seated resting ≈85–90°
+            max_angle=150,  # MAX = partial extension ≈150°
             name='knee',
         ),
         sides=['left', 'right'],
     ),
-    'bending_knee_with_support_seated': ExerciseRule(
-        name='Bending knee with support seated',
-        primary_joint=JointAngleRule(
-            keypoint_indices=(KEYPOINTS['left_hip'], KEYPOINTS['left_knee'], KEYPOINTS['left_ankle']),
-            min_angle=80,
-            max_angle=160,
-            name='knee',
-        ),
-        sides=['left', 'right'],
-    ),
-    'circular_pendulum_standing': ExerciseRule(
-        name='Circular pendulum standing',
-        primary_joint=JointAngleRule(
-            keypoint_indices=(KEYPOINTS['left_hip'], KEYPOINTS['left_shoulder'], KEYPOINTS['left_elbow']),
-            min_angle=10,
-            max_angle=60,
-            name='shoulder',
-        ),
-        sides=['left', 'right'],
-        continuous_oscillation=True,
-    ),
-    'external_rotation_shoulders_elastic': ExerciseRule(
-        name='External rotation shoulders elastic',
-        primary_joint=JointAngleRule(
-            keypoint_indices=(KEYPOINTS['left_shoulder'], KEYPOINTS['left_elbow'], KEYPOINTS['left_wrist']),
-            min_angle=70,
-            max_angle=110,
-            name='elbow',
-        ),
-        sides=['left', 'right'],
-    ),
-    'horizontal_weighted_openings_standing': ExerciseRule(
-        name='Horizontal weighted openings standing',
-        primary_joint=JointAngleRule(
-            keypoint_indices=(KEYPOINTS['left_elbow'], KEYPOINTS['left_shoulder'], KEYPOINTS['left_hip']),
-            min_angle=60,
-            max_angle=120,
-            name='shoulder',
-        ),
-        sides=['left', 'right'],
-    ),
-    'lift_extended_leg_supine': ExerciseRule(
-        name='Lift extended leg supine',
+    'lift_extended_leg_supine_s1': ExerciseRule(
+        # Lying flat, raise leg to ~30° from horizontal
+        # shoulder→hip→knee angle: flat ≈170°, raised 30° ≈150°, raised 35° ≈145°
+        name='Lift extended leg supine (Session 1)',
         primary_joint=JointAngleRule(
             keypoint_indices=(KEYPOINTS['left_shoulder'], KEYPOINTS['left_hip'], KEYPOINTS['left_knee']),
-            min_angle=30,
-            max_angle=70,
+            min_angle=145,  # MIN = leg raised ≈30–35° from horizontal
+            max_angle=170,  # MAX = leg lying flat
+            name='hip',
+        ),
+        secondary_joint=JointAngleRule(
+            # Knee must stay straight throughout (160–180°)
+            keypoint_indices=(KEYPOINTS['left_hip'], KEYPOINTS['left_knee'], KEYPOINTS['left_ankle']),
+            min_angle=160,
+            max_angle=180,
+            name='knee_extension',
+        ),
+        sides=['left', 'right'],
+    ),
+    'bending_knee_bed_support_supine_s1': ExerciseRule(
+        # Lying flat, heel-slide: extend ≈160°, flex knee to ≈70°
+        name='Bending knee with bed support supine (Session 1)',
+        primary_joint=JointAngleRule(
+            keypoint_indices=(KEYPOINTS['left_hip'], KEYPOINTS['left_knee'], KEYPOINTS['left_ankle']),
+            min_angle=70,   # MIN = knee most flexed ≈70°
+            max_angle=160,  # MAX = knee extended ≈160°
+            name='knee',
+        ),
+        sides=['left', 'right'],
+    ),
+    # ─────────────────────────────────────────────────────────────────────────
+    # SESSION 2 – LOWER BODY  (progressive, full ROM)
+    # ─────────────────────────────────────────────────────────────────────────
+    'bending_knee_no_support_seated_s2': ExerciseRule(
+        # Push for full extension (≈175°); resting knee still ≈90°
+        name='Bending knee no support seated (Session 2)',
+        primary_joint=JointAngleRule(
+            keypoint_indices=(KEYPOINTS['left_hip'], KEYPOINTS['left_knee'], KEYPOINTS['left_ankle']),
+            min_angle=85,   # MIN = seated resting ≈85–90° (same start)
+            max_angle=175,  # MAX = near-full extension ≈175°
+            name='knee',
+        ),
+        sides=['left', 'right'],
+    ),
+    'bending_knee_with_support_seated_s2': ExerciseRule(
+        # Back-supported, push further than S1 (≈165°)
+        name='Bending knee with support seated (Session 2)',
+        primary_joint=JointAngleRule(
+            keypoint_indices=(KEYPOINTS['left_hip'], KEYPOINTS['left_knee'], KEYPOINTS['left_ankle']),
+            min_angle=85,   # MIN = seated resting ≈85–90°
+            max_angle=165,  # MAX = progressive extension ≈165°
+            name='knee',
+        ),
+        sides=['left', 'right'],
+    ),
+    'lift_extended_leg_supine_s2': ExerciseRule(
+        # Raise leg to ~45–60° from horizontal
+        # shoulder→hip→knee: raised 45° ≈135°, raised 60° ≈120°
+        name='Lift extended leg supine (Session 2)',
+        primary_joint=JointAngleRule(
+            keypoint_indices=(KEYPOINTS['left_shoulder'], KEYPOINTS['left_hip'], KEYPOINTS['left_knee']),
+            min_angle=120,  # MIN = leg raised ≈55–60° from horizontal
+            max_angle=170,  # MAX = leg lying flat
             name='hip',
         ),
         secondary_joint=JointAngleRule(
@@ -119,15 +153,129 @@ EXERCISE_RULES = {
         ),
         sides=['left', 'right'],
     ),
-    'shoulder_flexion_seated': ExerciseRule(
-        name='Shoulder flexion seated',
+    'bending_knee_bed_support_supine_s2': ExerciseRule(
+        # Deeper heel-slide: flex knee to ≈55°, extend to ≈165°
+        name='Bending knee with bed support supine (Session 2)',
+        primary_joint=JointAngleRule(
+            keypoint_indices=(KEYPOINTS['left_hip'], KEYPOINTS['left_knee'], KEYPOINTS['left_ankle']),
+            min_angle=55,   # MIN = deeper knee flex ≈55°
+            max_angle=165,  # MAX = near-full extension ≈165°
+            name='knee',
+        ),
+        sides=['left', 'right'],
+    ),
+    # ─────────────────────────────────────────────────────────────────────────
+    # SESSION 1 – UPPER BODY  (conservative)
+    #
+    # Shoulder flexion seated: angle = hip→shoulder→elbow
+    #   Arm hanging at side: ≈10–15° (both vectors point downward)
+    #   Arm horizontal (90° raise): ≈90°
+    #   Arm fully overhead: ≈170°
+    #   Formula (simplified): shoulder_angle ≈ 90° + raise_degrees_above_horizontal
+    #
+    # Horizontal openings: angle = elbow→shoulder→hip  (front-facing camera)
+    #   Arms closed in front: ≈40–60°
+    #   Arms spread to T position: ≈100–120°
+    #
+    # External rotation elastic: angle = shoulder→elbow→wrist (elbow flexion)
+    #   Elbows stay near 90° throughout; range captures rotation tolerance
+    #
+    # Pendulum: angle = hip→shoulder→elbow  (side/front camera)
+    #   Arm at rest hanging: small angle; pendulum swings increase deviation
+    # ─────────────────────────────────────────────────────────────────────────
+    'shoulder_flexion_seated_s1': ExerciseRule(
+        # Raise arm from side (≈10°) up to just below shoulder height (≈90°)
+        # shoulder_angle formula: raise 40° above horizontal ≈ 130°
+        name='Shoulder flexion seated (Session 1)',
         primary_joint=JointAngleRule(
             keypoint_indices=(KEYPOINTS['left_hip'], KEYPOINTS['left_shoulder'], KEYPOINTS['left_elbow']),
-            min_angle=10,
-            max_angle=170,
+            min_angle=10,   # MIN = arm resting at side
+            max_angle=120,  # MAX = arm raised to shoulder height (~90° elevation)
             name='shoulder',
         ),
         sides=['left', 'right'],
+    ),
+    'horizontal_weighted_openings_standing_s1': ExerciseRule(
+        # Arms start closed in front (≈50°), open to moderate T spread (≈110°)
+        name='Horizontal weighted openings standing (Session 1)',
+        primary_joint=JointAngleRule(
+            keypoint_indices=(KEYPOINTS['left_elbow'], KEYPOINTS['left_shoulder'], KEYPOINTS['left_hip']),
+            min_angle=50,   # MIN = arms closed/forward position
+            max_angle=110,  # MAX = arms spread to moderate open position
+            name='shoulder',
+        ),
+        sides=['left', 'right'],
+    ),
+    'external_rotation_shoulders_elastic_s1': ExerciseRule(
+        # Elbows at sides bent at 90°; conservative rotation (elbow angle ≈75–105°)
+        name='External rotation shoulders elastic (Session 1)',
+        primary_joint=JointAngleRule(
+            keypoint_indices=(KEYPOINTS['left_shoulder'], KEYPOINTS['left_elbow'], KEYPOINTS['left_wrist']),
+            min_angle=75,   # MIN = elbows in neutral bent position
+            max_angle=105,  # MAX = moderate outward rotation
+            name='elbow',
+        ),
+        sides=['left', 'right'],
+    ),
+    'circular_pendulum_standing_s1': ExerciseRule(
+        # Small circles ~20 cm diameter; shoulder angle deviation ≈5–40°
+        name='Circular pendulum standing (Session 1)',
+        primary_joint=JointAngleRule(
+            keypoint_indices=(KEYPOINTS['left_hip'], KEYPOINTS['left_shoulder'], KEYPOINTS['left_elbow']),
+            min_angle=5,    # MIN = arm near straight hang
+            max_angle=40,   # MAX = small pendulum arc (≈20 cm circles)
+            name='shoulder',
+        ),
+        sides=['left', 'right'],
+        continuous_oscillation=True,
+    ),
+    # ─────────────────────────────────────────────────────────────────────────
+    # SESSION 2 – UPPER BODY  (progressive)
+    # ─────────────────────────────────────────────────────────────────────────
+    'shoulder_flexion_seated_s2': ExerciseRule(
+        # Full overhead raise: arm from side (≈10°) all the way overhead (≈170°)
+        name='Shoulder flexion seated (Session 2)',
+        primary_joint=JointAngleRule(
+            keypoint_indices=(KEYPOINTS['left_hip'], KEYPOINTS['left_shoulder'], KEYPOINTS['left_elbow']),
+            min_angle=10,   # MIN = arm resting at side
+            max_angle=170,  # MAX = arm fully overhead
+            name='shoulder',
+        ),
+        sides=['left', 'right'],
+    ),
+    'horizontal_weighted_openings_standing_s2': ExerciseRule(
+        # Full T spread: arms from closed (≈50°) to full horizontal open (≈130°)
+        name='Horizontal weighted openings standing (Session 2)',
+        primary_joint=JointAngleRule(
+            keypoint_indices=(KEYPOINTS['left_elbow'], KEYPOINTS['left_shoulder'], KEYPOINTS['left_hip']),
+            min_angle=50,   # MIN = arms closed/forward position
+            max_angle=130,  # MAX = arms fully spread to T position
+            name='shoulder',
+        ),
+        sides=['left', 'right'],
+    ),
+    'external_rotation_shoulders_elastic_s2': ExerciseRule(
+        # Wider rotation range with stronger band (elbow angle ≈65–115°)
+        name='External rotation shoulders elastic (Session 2)',
+        primary_joint=JointAngleRule(
+            keypoint_indices=(KEYPOINTS['left_shoulder'], KEYPOINTS['left_elbow'], KEYPOINTS['left_wrist']),
+            min_angle=65,   # MIN = elbows in neutral bent position
+            max_angle=115,  # MAX = wider outward rotation
+            name='elbow',
+        ),
+        sides=['left', 'right'],
+    ),
+    'circular_pendulum_standing_s2': ExerciseRule(
+        # Larger circles ~40–50 cm diameter; shoulder angle deviation ≈10–65°
+        name='Circular pendulum standing (Session 2)',
+        primary_joint=JointAngleRule(
+            keypoint_indices=(KEYPOINTS['left_hip'], KEYPOINTS['left_shoulder'], KEYPOINTS['left_elbow']),
+            min_angle=10,   # MIN = arm near straight hang
+            max_angle=65,   # MAX = larger pendulum arc (≈40–50 cm circles)
+            name='shoulder',
+        ),
+        sides=['left', 'right'],
+        continuous_oscillation=True,
     ),
 }
 
