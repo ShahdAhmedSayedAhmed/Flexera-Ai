@@ -7,13 +7,13 @@ cd /home/abdelraheem/Documents/Flutter_pro/yolo_implement
 python run_api.py
 ```
 
-Your API will be available at `https://92xqktpp-8000.uks1.devtunnels.ms/`
+Your API will be available at `https://unnoisy-atrial-nicolasa.ngrok-free.dev`
 
 ## 2. Test API Endpoints in Postman
 
 ### Test 1: Check API Health
 **Method:** `GET`  
-**URL:** `https://92xqktpp-8000.uks1.devtunnels.ms/health`  
+**URL:** `https://unnoisy-atrial-nicolasa.ngrok-free.dev/health`  
 **Expected Response:**
 ```json
 {
@@ -25,7 +25,7 @@ Your API will be available at `https://92xqktpp-8000.uks1.devtunnels.ms/`
 
 ### Test 2: Get Available Exercises
 **Method:** `GET`  
-**URL:** `https://92xqktpp-8000.uks1.devtunnels.ms/exercises`  
+**URL:** `https://unnoisy-atrial-nicolasa.ngrok-free.dev/exercises`  
 **Expected Response:**
 ```json
 {
@@ -37,7 +37,7 @@ Your API will be available at `https://92xqktpp-8000.uks1.devtunnels.ms/`
 
 ### Test 3: Start Exercise Session
 **Method:** `POST`  
-**URL:** `https://92xqktpp-8000.uks1.devtunnels.ms/session/start`  
+**URL:** `https://unnoisy-atrial-nicolasa.ngrok-free.dev/session/start`  
 **Headers:**
 ```
 Content-Type: application/json
@@ -60,7 +60,7 @@ Content-Type: application/json
 
 ### Test 4: Process Frame (with base64 image)
 **Method:** `POST`  
-**URL:** `https://92xqktpp-8000.uks1.devtunnels.ms/process`  
+**URL:** `https://unnoisy-atrial-nicolasa.ngrok-free.dev/process`  
 **Headers:**
 ```
 Content-Type: application/json
@@ -151,7 +151,7 @@ To test with real exercise poses:
   "variable": [
     {
       "key": "api_url",
-      "value": "https://92xqktpp-8000.uks1.devtunnels.ms"
+      "value": "https://unnoisy-atrial-nicolasa.ngrok-free.dev"
     }
   ],
   "item": [

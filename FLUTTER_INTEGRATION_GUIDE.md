@@ -4,7 +4,7 @@
 This guide shows you how to integrate exercise counting functionality into your existing Flutter app using your Python API.
 
 ## Prerequisites
-- Your Python API running on `https://92xqktpp-8000.uks1.devtunnels.ms/`
+- Your Python API running on `https://unnoisy-atrial-nicolasa.ngrok-free.dev`
 - Existing Flutter app
 - Android/iOS device with camera
 
@@ -53,7 +53,7 @@ class ExerciseCamera extends StatefulWidget {
   
   const ExerciseCamera({
     Key? key,
-    this.apiUrl = 'https://92xqktpp-8000.uks1.devtunnels.ms',
+    this.apiUrl = 'https://unnoisy-atrial-nicolasa.ngrok-free.dev',
     required this.exerciseId,
     required this.userId,
     this.onUpdate,
@@ -207,7 +207,7 @@ class MyExercisePage extends StatelessWidget {
       body: ExerciseCamera(
         exerciseId: '01', // Push-ups
         userId: 'user123',
-        apiUrl: 'https://92xqktpp-8000.uks1.devtunnels.ms', // Your API URL
+        apiUrl: 'https://unnoisy-atrial-nicolasa.ngrok-free.dev', // Your API URL
         onUpdate: (count, feedback) {
           print('Count: $count, Feedback: $feedback');
         },
