@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from ultralytics import YOLO
 
 import app.state as state
-from app.routers import health, exercises, sessions, process, websocket, simple_count
+from app.routers import health, exercises, sessions, process, websocket
 
 app = FastAPI(
     title="FlexEra Exercise AI API",
@@ -26,7 +26,6 @@ app.include_router(exercises.router)
 app.include_router(sessions.router)
 app.include_router(process.router)
 app.include_router(websocket.router)
-app.include_router(simple_count.router)
 
 
 @app.on_event("startup")

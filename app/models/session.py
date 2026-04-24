@@ -19,7 +19,6 @@ class ExerciseSession:
         self.exercise_id = exercise_id
         self.exercise_key = info["key"]
         self.exercise_name = info["name"]
-        self.session_number = info["session"]
         self.target_sets = target_sets
         self.target_reps = target_reps
         self.current_set = 1
@@ -59,9 +58,7 @@ class ExerciseSession:
             "session_key": self.session_key,
             "user_id": self.user_id,
             "exercise_id": self.exercise_id,
-            "exercise_key": self.exercise_key,
             "exercise_name": self.exercise_name,
-            "session_number": self.session_number,
             "target_sets": self.target_sets,
             "target_reps": self.target_reps,
             "current_set": self.current_set,

@@ -7,4 +7,6 @@ ultralytics>=8.0.0
 opencv-python-headless>=4.8.0
 numpy>=1.24.0
 
-# pyttsx3 and SpeechRecognition removed — no audio/mic support in HF Docker containers
+pyttsx3>=2.90
+
+SpeechRecognition>=3.10.0
